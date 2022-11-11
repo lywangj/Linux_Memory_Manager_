@@ -3,6 +3,18 @@
 
 #include <stdint.h>
 
+/* alloc for the application */
+void *
+xcalloc(char *struct_name, int units);
+
+void xfree(void *ptr);
+
+#define XCALLOC(units, struct_name) \
+    xcalloc(#struct_name, units)
+
+#define XFREE(ptr)  \
+    (xfree(ptr))
+
 /* Initialization Function */
 void
 mm_init();
@@ -13,11 +25,11 @@ mm_instantiate_new_page_family(char *struct_name, uint32_t struct_size);
 
 #define MM_REG_STRUCT(struct_name)  \
     (mm_instantiate_new_page_family(#struct_name, sizeof(struct_name)))
+    
 
-void
-mm_print_registered_page_families();
-
-
+void mm_print_memory_usage(char *struct_name);
+void mm_print_registered_page_families();
+void mm_print_block_usage();
 
 #endif /* __UAPI_MM__ */
 

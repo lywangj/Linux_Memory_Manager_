@@ -1,3 +1,11 @@
+
+# compile & executable file
+*.o
 exe
-*.txt
+gluethread/*.o
+
+# note
+info*
 note*
+*copy*
+*.txt
