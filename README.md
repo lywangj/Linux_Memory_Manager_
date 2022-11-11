@@ -7,7 +7,11 @@ Utilising system calls `mmap` or `munmap` to respond the memory request from ker
 
 ## Scheme of MM
 
+`vm` stores the virtual memory and '`datablock` - `metablock`' pairs requested by applications
 
+`vm for families` tracks all the applications
+
+```
                      vm_for_        vm_for_
                       emp_t          stu_t
                     ---------      ---------
@@ -15,15 +19,17 @@ Utilising system calls `mmap` or `munmap` to respond the memory request from ker
                     |_______|      |       |
                     |  28 F |      |       |
 vm_for_families     ---------      |       |
-                    |  36   |      |_______|
-  ---------         |_______|      |  28 F |
+                    |  36   |      |_______|    A: Allocated
+  ---------         |_______|      |  28 F |    F: Freed
   |       |         |  28 A |      ---------
   ---------         ---------      |       |
-  | stu_t | s=56    |       |      |  56   |  <- datablock
+  | stu_t | s=56    |  36   |      |  56   |  <- datablock
   ---------         |_______|      |_______|
   | emp_t | s=36    |  28 F |      |  28 A |  <- metablock
   ---------         ---------      ---------
+```
 
+### Output in Command line
 
 ```C
 Page Size = 4096 Bytes
@@ -132,7 +138,7 @@ void *ptr4 = malloc(10);
       |  10 T |      |  26 F |  <- metablock
       ---------      ---------
 
-### fragmentation
+### Fragmentation
 
 #### Internal Fragmentation
 
