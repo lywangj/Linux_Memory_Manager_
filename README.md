@@ -1,5 +1,51 @@
-# Linux_Memory_Manager_
-Develop a tool for Linux memory manager
+# Linux Memory Manager
+
+A tool to manage virtual memory allocation and deallocation on Linux operating systems
+
+Utilising system calls `mmap` or `munmap` to respond the memory request from kernel
+
+
+## Scheme of MM
+
+
+                     vm_for_        vm_for_
+                      emp_t          stu_t
+                    ---------      ---------
+                    |       |      |       |
+                    |_______|      |       |
+                    |  28 F |      |       |
+vm_for_families     ---------      |       |
+                    |  36   |      |_______|
+  ---------         |_______|      |  28 F |
+  |       |         |  28 A |      ---------
+  ---------         ---------      |       |
+  | stu_t | s=56    |       |      |  56   |  <- datablock
+  ---------         |_______|      |_______|
+  | emp_t | s=36    |  28 F |      |  28 A |  <- metablock
+  ---------         ---------      ---------
+
+
+```C
+Page Size = 4096 Bytes
+vm_page_family : emp_t, struct size = 36
+                 next = (nil), prev = (nil)
+                 page family = emp_t
+                        0x7fe6762b0018 Block 0   F R E E D  block_size = 36      offset = 24      prev = (nil)           next = 0x7fe6762b006c
+                        0x7fe6762b006c Block 1   ALLOCATED  block_size = 36      offset = 108     prev = 0x7fe6762b0018  next = 0x7fe6762b00c0
+                        0x7fe6762b00c0 Block 2   F R E E D  block_size = 3856    offset = 192     prev = 0x7fe6762b006c  next = (nil)
+
+vm_page_family : student_t, struct size = 56
+                 next = (nil), prev = (nil)
+                 page family = student_t
+                        0x7fe6762a0018 Block 0   ALLOCATED  block_size = 56      offset = 24      prev = (nil)           next = 0x7fe6762a0080
+                        0x7fe6762a0080 Block 1   F R E E D  block_size = 3920    offset = 128     prev = 0x7fe6762a0018  next = (nil)
+
+# Of VM Pages in Use : 2 (8192 Bytes)
+Total Memory being used by Memory Manager = 8192 Bytes
+emp_t                  TBC : 3       FBC : 2       OBC : 1    AppMemUsage : 84
+student_t              TBC : 2       FBC : 1       OBC : 1    AppMemUsage : 104
+```
+
 
 ## Heap Memory Management
 ### Metablick => in front of datablock
